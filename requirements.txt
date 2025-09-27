@@ -12,3 +12,4 @@ sqlparse==0.5.3
 tzdata==2025.2
 mysqlclient==2.2.0
 python==3.11
+pyTelegramBotAPI==4.29.1
