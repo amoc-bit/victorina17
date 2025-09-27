@@ -123,3 +123,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TELEGRAM_BOT_TOKEN = '7858669391:AAGJAteq_rikBoY0VDHcUtyT9Lhd9H6XVDo'
+
+AUTH_USER_MODEL = 'quiz.User'
