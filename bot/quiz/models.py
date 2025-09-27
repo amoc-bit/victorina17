@@ -32,18 +32,18 @@ class User(AbstractUser):
     )
     # Исправление конфликта related_name
     groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name='группы',
+        "auth.Group",
+        verbose_name="группы",
         blank=True,
-        related_name='quiz_user_set',  # Добавьте это
-        related_query_name='user',
+        related_name="quiz_user_set",  # Добавьте это
+        related_query_name="user",
     )
     user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name='права пользователя',
+        "auth.Permission",
+        verbose_name="права пользователя",
         blank=True,
-        related_name='quiz_user_set',  # Добавьте это
-        related_query_name='user',
+        related_name="quiz_user_set",  # Добавьте это
+        related_query_name="user",
     )
 
     def __str__(self):
@@ -69,7 +69,7 @@ class Team(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class Question(models.Model):
@@ -89,7 +89,12 @@ class Question(models.Model):
     """вес вопроса"""
     points = models.PositiveIntegerField(default=1, verbose_name="Вес вопроса")
 
+    def __init__(self, text: str, created_by):
+        self.text: str = text
+        self.created_by = created_by
+
     def __str__(self):
+
         return f"Вопрос от {self.created_by.username}: {self.text[:50]}..."
 
 
@@ -120,6 +125,9 @@ class Answer(models.Model):
         if not self.pk:  # Только при создании
             self.points = self.question.points
         super().save(*args, **kwargs)
+
+    def __init__(self, text: str):
+        self.text: str = text
 
     def __str__(self):
         return f"Ответ {self.user.username} на вопрос {self.question.id}: {self.text[:20]}..."
