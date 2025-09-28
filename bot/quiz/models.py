@@ -8,8 +8,8 @@ from django.utils import timezone
 
 # ver 2.2.0 готово не проверено
 
-
 # pylint: disable=no-member
+
 class User(AbstractUser):
     """Расширенная модель пользователя с ролью и связью с командой."""
 
