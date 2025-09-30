@@ -1,7 +1,7 @@
 import logging
 from telegram import Update, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, CommandHandler, MessageHandler, filters
-from django.utils import timezone
+#from django.utils import timezone
 from .models import User, Team
 from .keyboards import get_admin_keyboard, get_user_selection_keyboard, get_team_selection_keyboard
 from .messages import *

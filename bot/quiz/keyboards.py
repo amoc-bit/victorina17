@@ -3,14 +3,14 @@ from .models import User
 from .messages import *
 
 def get_admin_keyboard():
-    """Клавиатура администратора"""
+    """РљР»Р°РІРёР°С‚СѓСЂР° Р°РґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂР°"""
     return ReplyKeyboardMarkup([
         [BUTTON_CREATE_TEAM, BUTTON_DISTRIBUTE_PLAYERS],
         [BUTTON_CHECK_QUESTIONS, BUTTON_SUMMARIZE]
     ], resize_keyboard=True)
 
 async def get_user_selection_keyboard(users_query):
-    """Клавиатура для выбора пользователей"""
+    """РљР»Р°РІРёР°С‚СѓСЂР° РґР»СЏ РІС‹Р±РѕСЂР° РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№"""
     users = []
     async for user in users_query:
         users.append([user.username])
@@ -18,7 +18,7 @@ async def get_user_selection_keyboard(users_query):
     return ReplyKeyboardMarkup(users, resize_keyboard=True) if users else None
 
 async def get_team_selection_keyboard(teams_query):
-    """Клавиатура для выбора команд"""
+    """РљР»Р°РІРёР°С‚СѓСЂР° РґР»СЏ РІС‹Р±РѕСЂР° РєРѕРјР°РЅРґ"""
     teams = []
     async for team in teams_query:
         teams.append([team.name])
