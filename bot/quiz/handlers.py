@@ -9,11 +9,14 @@ from telegram.ext import (
 )
 from django.utils import timezone
 from .models import User
-from .keyboards import get_main_keyboard
+from .keyboards import get_main_menu
 from .utils import check_channel_subscription
 from .messages import *
+
+
 # ver 1.0.0 от дипсик, просмотрено не запускалось  Регистрация пользователя. Подписывает пользователя на канал/
 logger = logging.getLogger(__name__)
+logger.info(f'the module {__name__} running')
 
 # States для ConversationHandler
 GETTING_NAME = 1
@@ -22,6 +25,7 @@ GETTING_NAME = 1
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
     telegram_id = update.effective_user.id
+    #user_id= telegram_id
     username = update.effective_user.username or update.effective_user.first_name
 
     try:
@@ -51,7 +55,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await user.asave()
             await update.message.reply_text(
                 WELCOME_BACK.format(username=user.username),
-                reply_markup=await get_main_keyboard(user)
+                reply_markup=await get_main_menu(user)
             )
         else:
             # Сценарий 1: Новый пользователь

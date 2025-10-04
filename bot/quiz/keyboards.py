@@ -2,6 +2,12 @@ from telegram import ReplyKeyboardMarkup
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton
 from .models import User
 from .messages import *
+import logging
+
+
+logger = logging.getLogger(__name__)
+
+logger.info(f"the module {__name__} running")
 
 
 def get_main_menu(role):

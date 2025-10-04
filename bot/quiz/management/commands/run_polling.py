@@ -13,6 +13,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(o
 sys.path.append(project_root)
 
 logger = logging.getLogger(__name__)
+logger.info(f'the module {__name__} running')
 
 class Command(BaseCommand):
     help = 'Запуск Telegram бота в режиме long polling'
