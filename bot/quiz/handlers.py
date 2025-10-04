@@ -7,11 +7,13 @@ from telegram.ext import (
     filters,
     ConversationHandler
 )
+from telegram.ext import Application
 from django.utils import timezone
 from .models import User
 from .keyboards import get_main_menu
-from .utils import check_channel_subscription
+from .utils import SubscriptionManager
 from .messages import *
+
 
 
 # ver 1.0.0 от дипсик, просмотрено не запускалось  Регистрация пользователя. Подписывает пользователя на канал/
@@ -21,46 +23,53 @@ logger.info(f'the module {__name__} running')
 # States для ConversationHandler
 GETTING_NAME = 1
 
+subscription_manager = SubscriptionManager(
+    channel_username="@v_e_c_tor"  # Бот автоматически получит ID
+)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
     telegram_id = update.effective_user.id
     #user_id= telegram_id
     username = update.effective_user.username or update.effective_user.first_name
-
-    try:
-        # Проверяем подписку на канал
-        is_subscribed = await check_channel_subscription(telegram_id)
-
-        if not is_subscribed:
-            await update.message.reply_text(
-                CHANNEL_SUBSCRIPTION_REQUIRED.format(
-                    channel_url=context.bot_data.get('channel_url')
-                )
-            )
-            return
-
-        # Проверяем существование пользователя
-        user, created = await User.objects.aget_or_create(
-            telegram_id=telegram_id,
-            defaults={
-                'username': username,
-                'last_activity': timezone.now()
-            }
+    is_subscribed = await subscription_manager.check_subscription(
+        context.bot,  # передаем bot как параметр
+        update.effective_user.id
         )
+    if not is_subscribed:
+        await subscription_manager.send_subscription_request(
+            update.effective_chat.id,
+            context.bot  # передаем bot как параметр
+        )
+        await update.message.reply_text(
+                CHANNEL_SUBSCRIPTION_REQUIRED.format(
+                    channel_url=context.bot_data.get('channel_url'))
 
-        if not created:
-            # Сценарий 2: Обновление данных существующего пользователя
-            user.last_activity = timezone.now()
-            await user.asave()
-            await update.message.reply_text(
-                WELCOME_BACK.format(username=user.username),
-                reply_markup=await get_main_menu(user)
-            )
-        else:
-            # Сценарий 1: Новый пользователь
-            await update.message.reply_text(WELCOME)
-            return GETTING_NAME
+
+
+
+
+    # Проверяем существование пользователя
+    user, created = await User.objects.aget_or_create(
+        telegram_id=telegram_id,
+        defaults={
+            'username': username,
+            'last_activity': timezone.now()
+        }
+    )
+
+    if not created:
+        # Сценарий 2: Обновление данных существующего пользователя
+        user.last_activity = timezone.now()
+        await user.asave()
+        await update.message.reply_text(
+            WELCOME_BACK.format(username=user.username),
+            reply_markup=await get_main_menu(user)
+        )
+    else:
+        # Сценарий 1: Новый пользователь
+        await update.message.reply_text(WELCOME)
+        return GETTING_NAME
 
     except Exception as e:
         logger.error(f"Error in start handler: {e}")
