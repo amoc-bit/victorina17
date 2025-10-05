@@ -23,9 +23,7 @@ logger.info(f'the module {__name__} running')
 # States для ConversationHandler
 GETTING_NAME = 1
 
-subscription_manager = SubscriptionManager(
-    channel_username="@v_e_c_tor"  # Бот автоматически получит ID
-)
+
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик команды /start"""
@@ -33,7 +31,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     #user_id= telegram_id
     username = update.effective_user.username or update.effective_user.first_name
     try:
-        
+        subscription_manager = SubscriptionManager(
+        channel_username="@v_e_c_tor"  # Бот автоматически получит ID
+        )
+
         is_subscribed = await subscription_manager.check_subscription(
             context.bot,  # передаем bot как параметр
             update.effective_user.id
