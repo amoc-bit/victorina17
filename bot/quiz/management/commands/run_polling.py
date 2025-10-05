@@ -7,7 +7,6 @@ import sys
 from telegram import Update
 from telegram.ext import Application, ContextTypes
 from telegram.ext import filters, MessageHandler, CommandHandler
-from .utils import SubscriptionManager
 
 
 # Добавляем корневую директорию проекта в Python path

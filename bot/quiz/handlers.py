@@ -32,44 +32,46 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     telegram_id = update.effective_user.id
     #user_id= telegram_id
     username = update.effective_user.username or update.effective_user.first_name
-    is_subscribed = await subscription_manager.check_subscription(
-        context.bot,  # передаем bot как параметр
-        update.effective_user.id
+    try:
+        
+        is_subscribed = await subscription_manager.check_subscription(
+            context.bot,  # передаем bot как параметр
+            update.effective_user.id
+            )
+        if not is_subscribed:
+            await subscription_manager.send_subscription_request(
+                update.effective_chat.id,
+                context.bot  # передаем bot как параметр
+            )
+            await update.message.reply_text(
+                    CHANNEL_SUBSCRIPTION_REQUIRED.format(
+                        channel_url=context.bot_data.get('channel_url')))
+
+
+
+
+
+        # Проверяем существование пользователя
+        user, created = await User.objects.aget_or_create(
+            telegram_id=telegram_id,
+            defaults={
+                'username': username,
+                'last_activity': timezone.now()
+            }
         )
-    if not is_subscribed:
-        await subscription_manager.send_subscription_request(
-            update.effective_chat.id,
-            context.bot  # передаем bot как параметр
-        )
-        await update.message.reply_text(
-                CHANNEL_SUBSCRIPTION_REQUIRED.format(
-                    channel_url=context.bot_data.get('channel_url'))
 
-
-
-
-
-    # Проверяем существование пользователя
-    user, created = await User.objects.aget_or_create(
-        telegram_id=telegram_id,
-        defaults={
-            'username': username,
-            'last_activity': timezone.now()
-        }
-    )
-
-    if not created:
-        # Сценарий 2: Обновление данных существующего пользователя
-        user.last_activity = timezone.now()
-        await user.asave()
-        await update.message.reply_text(
-            WELCOME_BACK.format(username=user.username),
-            reply_markup=await get_main_menu(user)
-        )
-    else:
-        # Сценарий 1: Новый пользователь
-        await update.message.reply_text(WELCOME)
-        return GETTING_NAME
+        if not created:
+            # Сценарий 2: Обновление данных существующего пользователя
+            user.last_activity = timezone.now()
+            await user.asave()
+            await update.message.reply_text(
+                WELCOME_BACK.format(username=user.username),
+                reply_markup=await get_main_menu(user)
+            )
+        else:
+            # Сценарий 1: Новый пользователь
+            await update.message.reply_text(WELCOME)
+            return GETTING_NAME
 
     except Exception as e:
         logger.error(f"Error in start handler: {e}")
