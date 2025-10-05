@@ -41,9 +41,11 @@ class SubscriptionManager:
         self.channel_url = (
             f"https://t.me/{channel_username.lstrip('@')}" if channel_username else None
         )
+        logger.info(f"Конструктор  класса, изначально имеем {self.channel_id},{self.channel_url}, {self.channel_username}")
 
     async def initialize(self, bot):
         """Асинхронная инициализация - получаем ID канала если нужно"""
+        logger.info(f"Инициализация класса")
         if self.channel_username and not self.channel_id:
             try:
                 chat = await bot.get_chat(self.channel_username)
@@ -90,6 +92,4 @@ class SubscriptionManager:
         )
 
 
-sub_manager = SubscriptionManager(
-    channel_username="@v_e_c_tor"  # Бот автоматически получит ID
-)
+
