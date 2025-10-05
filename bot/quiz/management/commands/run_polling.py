@@ -7,12 +7,15 @@ import sys
 from telegram import Update
 from telegram.ext import Application, ContextTypes
 from telegram.ext import filters, MessageHandler, CommandHandler
+from .utils import SubscriptionManager
+
 
 # Добавляем корневую директорию проекта в Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 sys.path.append(project_root)
 
 logger = logging.getLogger(__name__)
+logger.info(f'the module {__name__} running')
 
 class Command(BaseCommand):
     help = 'Запуск Telegram бота в режиме long polling'
