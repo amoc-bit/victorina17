@@ -45,6 +45,7 @@ class User(AbstractUser):
         related_name="quiz_user_set",  # Добавьте это
         related_query_name="user",
     )
+      
 
     def __str__(self):
         return f"{self.username} ({self.role})"
